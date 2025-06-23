@@ -23,6 +23,14 @@ class Player {
         // Velocity is integrated each frame in Game.animate
         this.velocity = new THREE.Vector3();
 
+        // Simple energy mechanic used by the HUD
+        this.maxEnergy = 100;
+        this.energy = this.maxEnergy;
+        this.energyRegen = 10; // per second
+
+        // Remaining gravity rotations available
+        this.gravityChangesLeft = 3;
+
         // Whether the player is on the ground.  This simple demo considers the
         // plane at y = 0 as the floor regardless of gravity orientation.
         this.isGrounded = false;
@@ -38,6 +46,7 @@ class Player {
      * @param {GravityController} gravity
      */
     update(delta, keys, gravity, collidables = [], actions = {}) {
+        this.energy = Math.min(this.maxEnergy, this.energy + this.energyRegen * delta);
         const speed = 5;
         if (keys['ArrowLeft'] || keys['KeyA']) {
             this.velocity.x -= speed * delta;
@@ -74,11 +83,12 @@ class Player {
      * @param {THREE.Vector3} gravityVector
      */
     jump(gravityVector) {
-        if (!this.isGrounded) return;
+        if (!this.isGrounded || this.energy < 10) return;
         const jumpStrength = 5;
         const impulse = gravityVector.clone().normalize().multiplyScalar(-jumpStrength);
         this.velocity.add(impulse);
         this.isGrounded = false;
+        this.energy -= 10;
         if (window.audioManager) window.audioManager.play('jump');
     }
 
@@ -98,6 +108,7 @@ class Player {
      * Dash in the current horizontal movement direction.
      */
     dash() {
+        if (this.energy < 20) return;
         const dir = this.velocity.clone();
         dir.y = 0;
         if (dir.lengthSq() === 0) {
@@ -107,6 +118,13 @@ class Player {
         }
         const dashStrength = 8;
         this.velocity.addScaledVector(dir, dashStrength);
+        this.energy -= 20;
+    }
+
+    useGravityChange() {
+        if (this.gravityChangesLeft > 0) {
+            this.gravityChangesLeft--;
+        }
     }
 
     /**

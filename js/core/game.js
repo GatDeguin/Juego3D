@@ -23,6 +23,7 @@ class Game {
         this._setupScene();
         this._setupControls();
         this._setupAudio();
+        this.hud = new HUD(this.player);
 
         this.animate = this.animate.bind(this);
         window.addEventListener('resize', () => this._onResize());
@@ -81,16 +82,19 @@ class Game {
             if (this.input.wasPressed('KeyG')) {
                 this.gravity.rotate('x');
                 this.player.onGravityChange(this.gravity.vector);
+                this.player.useGravityChange();
                 if (window.audioManager) window.audioManager.play('gravity');
             }
             if (this.input.wasPressed('KeyH')) {
                 this.gravity.rotate('y');
                 this.player.onGravityChange(this.gravity.vector);
+                this.player.useGravityChange();
                 if (window.audioManager) window.audioManager.play('gravity');
             }
             if (this.input.wasPressed('KeyJ')) {
                 this.gravity.rotate('z');
                 this.player.onGravityChange(this.gravity.vector);
+                this.player.useGravityChange();
                 if (window.audioManager) window.audioManager.play('gravity');
             }
 
@@ -104,6 +108,7 @@ class Game {
             this.camera.position.addScaledVector(this.player.velocity, delta);
             this.camera.lookAt(this.player.mesh.position);
         }
+        this.hud.update();
         this.renderer.render(this.scene, this.camera);
     }
 }

@@ -133,4 +133,22 @@ canvas {
     .mobile-only {
         display: block;
     }
+
+    #energyContainer {
+        width: 120px;
+    }
+
+    #gravityCounter {
+        font-size: 12px;
+    }
+
+    #minimap {
+        width: 100px;
+        height: 100px;
+    }
+
+    canvas {
+        width: 100%;
+        height: auto;
+    }
 }
