@@ -21,7 +21,15 @@
         <div id="gravityCounter">Gravity Changes: <span id="gravityRemaining">0</span></div>
         <div id="minimap"></div>
     </div>
+    <div id="touchControls" class="mobile-only">
+        <button id="btnJump">Jump</button>
+        <button id="btnDash">Dash</button>
+        <button id="btnRotX">GX</button>
+        <button id="btnRotY">GY</button>
+        <button id="btnRotZ">GZ</button>
+    </div>
     <script src="https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.min.js"></script>
+    <script src="js/core/input-handler.js"></script>
     <script src="js/core/gravity-controller.js"></script>
     <script src="js/entities/player.js"></script>
     <script src="js/entities/MovingPlatform.js"></script>

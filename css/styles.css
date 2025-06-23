@@ -98,6 +98,22 @@ canvas {
     display: none;
 }
 
+#touchControls {
+    position: absolute;
+    bottom: 10px;
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    gap: 5px;
+    pointer-events: auto;
+}
+
+#touchControls button {
+    width: 40px;
+    height: 40px;
+    font-size: 12px;
+}
+
 @media (max-width: 600px) {
     .mobile-only {
         display: block;

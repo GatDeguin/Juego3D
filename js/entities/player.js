@@ -21,7 +21,7 @@ class Player {
      * @param {object} keys - dictionary with pressed keys
      * @param {GravityController} gravity
      */
-    update(delta, keys, gravity, collidables = []) {
+    update(delta, keys, gravity, collidables = [], actions = {}) {
         const speed = 5;
         if (keys['ArrowLeft'] || keys['KeyA']) {
             this.velocity.x -= speed * delta;
@@ -36,10 +36,11 @@ class Player {
             this.velocity.z += speed * delta;
         }
 
-        if (keys['Space']) {
+        if (actions.jump) {
             this.jump(gravity.vector);
-            // Prevent continuous jumping while the key is held down
-            keys['Space'] = false;
+        }
+        if (actions.dash) {
+            this.dash();
         }
 
         // Apply gravity and integrate velocity
@@ -74,6 +75,21 @@ class Player {
         const dashStrength = 8;
         const impulse = newGravity.clone().normalize().multiplyScalar(dashStrength);
         this.velocity.add(impulse);
+    }
+
+    /**
+     * Dash in the current horizontal movement direction.
+     */
+    dash() {
+        const dir = this.velocity.clone();
+        dir.y = 0;
+        if (dir.lengthSq() === 0) {
+            dir.set(0, 0, -1);
+        } else {
+            dir.normalize();
+        }
+        const dashStrength = 8;
+        this.velocity.addScaledVector(dir, dashStrength);
     }
 
     /**

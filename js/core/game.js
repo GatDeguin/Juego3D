@@ -37,25 +37,8 @@ class Game {
     }
 
     _setupControls() {
-        this.keys = {};
-        window.addEventListener('keydown', (e) => {
-            this.keys[e.code] = true;
-            if (e.code === 'KeyG') {
-                this.gravity.rotate('x');
-                this.player.onGravityChange(this.gravity.vector);
-            }
-            if (e.code === 'KeyH') {
-                this.gravity.rotate('y');
-                this.player.onGravityChange(this.gravity.vector);
-            }
-            if (e.code === 'KeyJ') {
-                this.gravity.rotate('z');
-                this.player.onGravityChange(this.gravity.vector);
-            }
-        });
-        window.addEventListener('keyup', (e) => {
-            this.keys[e.code] = false;
-        });
+        this.input = new InputHandler();
+        this.keys = this.input.keys;
     }
 
     _onResize() {
@@ -71,7 +54,27 @@ class Game {
         const delta = this.clock.getDelta();
 
         if (!this.paused) {
-            this.player.update(delta, this.keys, this.gravity, this.level.getCollidables());
+            this.input.update();
+
+            if (this.input.wasPressed('KeyG')) {
+                this.gravity.rotate('x');
+                this.player.onGravityChange(this.gravity.vector);
+            }
+            if (this.input.wasPressed('KeyH')) {
+                this.gravity.rotate('y');
+                this.player.onGravityChange(this.gravity.vector);
+            }
+            if (this.input.wasPressed('KeyJ')) {
+                this.gravity.rotate('z');
+                this.player.onGravityChange(this.gravity.vector);
+            }
+
+            const actions = {
+                jump: this.input.wasPressed('Space'),
+                dash: this.input.wasPressed('KeyK'),
+            };
+
+            this.player.update(delta, this.keys, this.gravity, this.level.getCollidables(), actions);
             this.level.update(delta, this.player);
             this.camera.position.addScaledVector(this.player.velocity, delta);
             this.camera.lookAt(this.player.mesh.position);
