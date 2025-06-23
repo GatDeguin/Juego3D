@@ -1,8 +1,24 @@
 class Player {
     constructor() {
-        const geometry = new THREE.BoxGeometry(1, 1, 1);
-        const material = new THREE.MeshNormalMaterial();
-        this.mesh = new THREE.Mesh(geometry, material);
+        // Container used while the model loads
+        this.mesh = new THREE.Group();
+        const placeholder = new THREE.Mesh(
+            new THREE.BoxGeometry(1, 1, 1),
+            new THREE.MeshNormalMaterial()
+        );
+        this.mesh.add(placeholder);
+
+        // Load Alex Vega model
+        const loader = new THREE.GLTFLoader();
+        loader.load(
+            'assets/models/alex_vega.glb',
+            (gltf) => {
+                this.mesh.remove(placeholder);
+                this.mesh.add(gltf.scene);
+            },
+            undefined,
+            (err) => console.error('Failed to load Alex Vega model', err)
+        );
 
         // Velocity is integrated each frame in Game.animate
         this.velocity = new THREE.Vector3();
