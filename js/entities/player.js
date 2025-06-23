@@ -21,7 +21,7 @@ class Player {
      * @param {object} keys - dictionary with pressed keys
      * @param {GravityController} gravity
      */
-    update(delta, keys, gravity) {
+    update(delta, keys, gravity, collidables = []) {
         const speed = 5;
         if (keys['ArrowLeft'] || keys['KeyA']) {
             this.velocity.x -= speed * delta;
@@ -46,14 +46,8 @@ class Player {
         gravity.applyTo(this.velocity, delta);
         this.mesh.position.addScaledVector(this.velocity, delta);
 
-        // Very naive ground check assuming the floor lies on the Y axis
-        if (this.mesh.position.y <= 0.5 && gravity.vector.y < 0) {
-            this.isGrounded = true;
-            this.mesh.position.y = 0.5;
-            this.velocity.y = 0;
-        } else {
-            this.isGrounded = false;
-        }
+        this.isGrounded = false;
+        this._applyCollisions(collidables);
 
         this.resetIfOutOfBounds();
     }
@@ -90,6 +84,28 @@ class Player {
         if (Math.abs(p.x) > this.bounds || Math.abs(p.y) > this.bounds || Math.abs(p.z) > this.bounds) {
             this.mesh.position.set(0, 2, 0);
             this.velocity.set(0, 0, 0);
+        }
+    }
+
+    /**
+     * Naive collision handling against a list of meshes.
+     * Collisions are only resolved on the Y axis so the player can
+     * stand and walk on top of objects.
+     * @param {THREE.Mesh[]} collidables
+     */
+    _applyCollisions(collidables) {
+        const playerBox = new THREE.Box3().setFromObject(this.mesh);
+        for (const obj of collidables) {
+            const objBox = new THREE.Box3().setFromObject(obj);
+            if (playerBox.intersectsBox(objBox)) {
+                // Check if the player is coming from above the object
+                if (this.velocity.y <= 0 && playerBox.min.y >= objBox.max.y - 0.1) {
+                    this.mesh.position.y = objBox.max.y + 0.5;
+                    this.velocity.y = 0;
+                    this.isGrounded = true;
+                    playerBox.setFromObject(this.mesh);
+                }
+            }
         }
     }
 }
