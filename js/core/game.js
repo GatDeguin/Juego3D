@@ -22,6 +22,7 @@ class Game {
         this.onComplete = onComplete;
         this._setupScene();
         this._setupControls();
+        this._setupAudio();
 
         this.animate = this.animate.bind(this);
         window.addEventListener('resize', () => this._onResize());
@@ -43,6 +44,25 @@ class Game {
         this.keys = this.input.keys;
     }
 
+    _setupAudio() {
+        this.audio = new AudioManager(this.camera);
+        window.audioManager = this.audio;
+        const loads = [
+            this.audio.load('jump', 'assets/audio/jump.wav'),
+            this.audio.load('gravity', 'assets/audio/gravity.wav'),
+            this.audio.load('pickup', 'assets/audio/pickup.wav'),
+            this.audio.load('background', 'assets/audio/background.wav'),
+        ];
+        Promise.all(loads).then(() => {
+            this.bgMusic = this.audio.play('background', {
+                loop: true,
+                volume: 0.5,
+            });
+        }).catch(err => {
+            console.warn('Audio files missing, running without sound.', err);
+        });
+    }
+
     _onResize() {
         const width = this.canvas.clientWidth;
         const height = this.canvas.clientHeight;
@@ -61,14 +81,17 @@ class Game {
             if (this.input.wasPressed('KeyG')) {
                 this.gravity.rotate('x');
                 this.player.onGravityChange(this.gravity.vector);
+                if (window.audioManager) window.audioManager.play('gravity');
             }
             if (this.input.wasPressed('KeyH')) {
                 this.gravity.rotate('y');
                 this.player.onGravityChange(this.gravity.vector);
+                if (window.audioManager) window.audioManager.play('gravity');
             }
             if (this.input.wasPressed('KeyJ')) {
                 this.gravity.rotate('z');
                 this.player.onGravityChange(this.gravity.vector);
+                if (window.audioManager) window.audioManager.play('gravity');
             }
 
             const actions = {

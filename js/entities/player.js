@@ -63,6 +63,7 @@ class Player {
         const impulse = gravityVector.clone().normalize().multiplyScalar(-jumpStrength);
         this.velocity.add(impulse);
         this.isGrounded = false;
+        if (window.audioManager) window.audioManager.play('jump');
     }
 
     /**
