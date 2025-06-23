@@ -27,11 +27,8 @@ class Game {
     }
 
     _setupScene() {
-        const planeGeo = new THREE.PlaneGeometry(50, 50);
-        const planeMat = new THREE.MeshBasicMaterial({ color: 0x404040, side: THREE.DoubleSide });
-        const plane = new THREE.Mesh(planeGeo, planeMat);
-        plane.rotation.x = -Math.PI / 2;
-        this.scene.add(plane);
+        this.level = new Level01(this.scene);
+        this.player.mesh.position.copy(this.level.getSpawnPoint());
     }
 
     _setupControls() {
@@ -68,7 +65,7 @@ class Game {
         requestAnimationFrame(this.animate);
         const delta = this.clock.getDelta();
 
-        this.player.update(delta, this.keys, this.gravity);
+        this.player.update(delta, this.keys, this.gravity, this.level.getCollidables());
         this.camera.position.addScaledVector(this.player.velocity, delta);
         this.camera.lookAt(this.player.mesh.position);
         this.renderer.render(this.scene, this.camera);
