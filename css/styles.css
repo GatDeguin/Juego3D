@@ -13,6 +13,10 @@ canvas {
     border: 1px solid #fff;
 }
 
+.hidden {
+    display: none;
+}
+
 #hud {
     position: absolute;
     top: 0;
@@ -70,6 +74,17 @@ canvas {
     color: #fff;
     transition: opacity 0.3s ease;
     pointer-events: auto;
+}
+
+#levelMenu {
+    margin-top: 10px;
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+}
+
+#levelMenu button[disabled] {
+    opacity: 0.5;
 }
 
 #startScreen.hidden {
