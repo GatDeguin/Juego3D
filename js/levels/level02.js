@@ -1,4 +1,4 @@
-class Level01 {
+class Level02 {
     constructor(scene, onComplete = () => {}) {
         this.scene = scene;
         this.onComplete = onComplete;
@@ -12,42 +12,37 @@ class Level01 {
     }
 
     _createEnvironment() {
-        const floorGeo = new THREE.BoxGeometry(20, 1, 20);
-        const floorMat = new THREE.MeshBasicMaterial({ color: 0x404040 });
+        const floorGeo = new THREE.BoxGeometry(30, 1, 30);
+        const floorMat = new THREE.MeshBasicMaterial({ color: 0x303030 });
         const floor = new THREE.Mesh(floorGeo, floorMat);
         floor.position.y = -0.5;
         this.scene.add(floor);
         this.collidables.push(floor);
 
-        const wallGeo = new THREE.BoxGeometry(1, 3, 20);
-        const wallMat = new THREE.MeshBasicMaterial({ color: 0x808080 });
-        const wall1 = new THREE.Mesh(wallGeo, wallMat);
-        wall1.position.set(-10, 1.5, 0);
-        this.scene.add(wall1);
-        this.collidables.push(wall1);
-
-        const wall2 = wall1.clone();
-        wall2.position.set(10, 1.5, 0);
-        this.scene.add(wall2);
-        this.collidables.push(wall2);
-
         const boxGeo = new THREE.BoxGeometry(2, 2, 2);
-        const box = new THREE.Mesh(boxGeo, wallMat.clone());
-        box.position.set(0, 1, -5);
-        this.scene.add(box);
-        this.collidables.push(box);
+        const wallMat = new THREE.MeshBasicMaterial({ color: 0x888888 });
+        const box1 = new THREE.Mesh(boxGeo, wallMat);
+        box1.position.set(-4, 1, -5);
+        this.scene.add(box1);
+        this.collidables.push(box1);
 
-        // Moving platform
-        const moving = new MovingPlatform(new THREE.Vector3(0, 1.5, 5), 'x', 6, 2);
+        const box2 = box1.clone();
+        box2.position.set(4, 1, -5);
+        this.scene.add(box2);
+        this.collidables.push(box2);
+
+        const moving = new MovingPlatform(new THREE.Vector3(0, 1.5, 5), 'z', 8, 2);
         this.scene.add(moving.mesh);
         this.platforms.push(moving);
         this.collidables.push(moving.mesh);
 
-        // Power-up
-        const power = new PowerUp(new THREE.Vector3(0, 1.5, 0), () => this._powerUpCollected());
-        this.scene.add(power.mesh);
-        this.powerUps.push(power);
-        this.totalPowerUps++;
+        const positions = [new THREE.Vector3(0, 1.5, 0), new THREE.Vector3(5, 1.5, 0)];
+        for (const pos of positions) {
+            const power = new PowerUp(pos, () => this._powerUpCollected());
+            this.scene.add(power.mesh);
+            this.powerUps.push(power);
+            this.totalPowerUps++;
+        }
     }
 
     _powerUpCollected() {
@@ -75,4 +70,4 @@ class Level01 {
     }
 }
 
-window.Level01 = Level01;
+window.Level02 = Level02;

@@ -1,5 +1,5 @@
 class Game {
-    constructor(canvasId = 'gameCanvas') {
+    constructor(canvasId = 'gameCanvas', levelClass = Level01, onComplete = () => {}) {
         this.canvas = document.getElementById(canvasId);
         this.scene = new THREE.Scene();
         this.camera = new THREE.PerspectiveCamera(
@@ -18,6 +18,8 @@ class Game {
         this.scene.add(this.player.mesh);
         this.camera.position.set(0, 2, 5);
 
+        this.levelClass = levelClass;
+        this.onComplete = onComplete;
         this._setupScene();
         this._setupControls();
 
@@ -32,7 +34,7 @@ class Game {
     }
 
     _setupScene() {
-        this.level = new Level01(this.scene);
+        this.level = new this.levelClass(this.scene, this.onComplete);
         this.player.mesh.position.copy(this.level.getSpawnPoint());
     }
 
