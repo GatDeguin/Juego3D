@@ -8,6 +8,13 @@
 </head>
 <body>
     <canvas id="gameCanvas" width="800" height="600"></canvas>
+    <div id="hud">
+        <div id="energyContainer">
+            <div id="energyBar"></div>
+        </div>
+        <div id="gravityCounter">Gravity Changes: <span id="gravityRemaining">0</span></div>
+        <div id="minimap"></div>
+    </div>
     <script src="https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.min.js"></script>
     <script src="js/core/gravity-controller.js"></script>
     <script src="js/entities/player.js"></script>
