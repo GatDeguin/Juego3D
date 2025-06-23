@@ -12,6 +12,13 @@ The prototype focuses on a simple scene where the player can rotate the directio
 - **Space**: Jump
 - **G**: Rotate gravity (work in progress)
 
+## Audio
+
+The game includes simple sound effects for jumping, shifting gravity and
+collecting power-ups. Background music plays in a loop when a level starts.
+
+Place your own audio clips in `assets/audio` named `jump.wav`, `gravity.wav`, `pickup.wav` and `background.wav`. These files are ignored by git.
+
 ## Development Setup
 
 The game relies on Three.js for all 3D rendering. No build step is required; just serve the files with a small HTTP server. With Node.js installed you can run:

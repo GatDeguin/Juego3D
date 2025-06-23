@@ -21,6 +21,7 @@ class PowerUp {
             this.collected = true;
             this.mesh.visible = false;
             this.onCollect(player);
+            if (window.audioManager) window.audioManager.play('pickup');
         }
     }
 }
