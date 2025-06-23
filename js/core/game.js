@@ -66,6 +66,7 @@ class Game {
         const delta = this.clock.getDelta();
 
         this.player.update(delta, this.keys, this.gravity, this.level.getCollidables());
+        this.level.update(delta, this.player);
         this.camera.position.addScaledVector(this.player.velocity, delta);
         this.camera.lookAt(this.player.mesh.position);
         this.renderer.render(this.scene, this.camera);

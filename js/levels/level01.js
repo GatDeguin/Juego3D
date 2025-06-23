@@ -2,6 +2,8 @@ class Level01 {
     constructor(scene) {
         this.scene = scene;
         this.collidables = [];
+        this.platforms = [];
+        this.powerUps = [];
         this.spawnPoints = [new THREE.Vector3(0, 2, 0)];
         this._createEnvironment();
     }
@@ -31,10 +33,30 @@ class Level01 {
         box.position.set(0, 1, -5);
         this.scene.add(box);
         this.collidables.push(box);
+
+        // Moving platform
+        const moving = new MovingPlatform(new THREE.Vector3(0, 1.5, 5), 'x', 6, 2);
+        this.scene.add(moving.mesh);
+        this.platforms.push(moving);
+        this.collidables.push(moving.mesh);
+
+        // Power-up
+        const power = new PowerUp(new THREE.Vector3(0, 1.5, 0));
+        this.scene.add(power.mesh);
+        this.powerUps.push(power);
     }
 
     getCollidables() {
         return this.collidables;
+    }
+
+    update(delta, player) {
+        for (const plat of this.platforms) {
+            plat.update(delta);
+        }
+        for (const p of this.powerUps) {
+            p.checkCollision(player);
+        }
     }
 
     getSpawnPoint(index = 0) {

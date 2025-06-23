@@ -47,7 +47,7 @@ class Player {
         this.mesh.position.addScaledVector(this.velocity, delta);
 
         this.isGrounded = false;
-        this._applyCollisions(collidables);
+        this._applyCollisions(collidables, gravity.vector);
 
         this.resetIfOutOfBounds();
     }
@@ -89,24 +89,38 @@ class Player {
 
     /**
      * Naive collision handling against a list of meshes.
-     * Collisions are only resolved on the Y axis so the player can
-     * stand and walk on top of objects.
+     * Collisions are resolved along the current gravity axis so the
+     * player can stand and walk on top of objects regardless of the
+     * orientation.
      * @param {THREE.Mesh[]} collidables
+     * @param {THREE.Vector3} gravityVector
      */
-    _applyCollisions(collidables) {
+    _applyCollisions(collidables, gravityVector) {
+        const axis = this._gravityAxis(gravityVector);
         const playerBox = new THREE.Box3().setFromObject(this.mesh);
         for (const obj of collidables) {
             const objBox = new THREE.Box3().setFromObject(obj);
             if (playerBox.intersectsBox(objBox)) {
-                // Check if the player is coming from above the object
-                if (this.velocity.y <= 0 && playerBox.min.y >= objBox.max.y - 0.1) {
-                    this.mesh.position.y = objBox.max.y + 0.5;
-                    this.velocity.y = 0;
+                const vel = this.velocity[axis.name];
+                const fromAbove = axis.sign < 0
+                    ? vel <= 0 && playerBox.min[axis.name] >= objBox.max[axis.name] - 0.1
+                    : vel >= 0 && playerBox.max[axis.name] <= objBox.min[axis.name] + 0.1;
+                if (fromAbove) {
+                    this.mesh.position[axis.name] =
+                        axis.sign < 0 ? objBox.max[axis.name] + 0.5 : objBox.min[axis.name] - 0.5;
+                    this.velocity[axis.name] = 0;
                     this.isGrounded = true;
                     playerBox.setFromObject(this.mesh);
                 }
             }
         }
+    }
+
+    _gravityAxis(vector) {
+        const abs = vector.clone().abs();
+        if (abs.x >= abs.y && abs.x >= abs.z) return { name: 'x', sign: Math.sign(vector.x) };
+        if (abs.y >= abs.x && abs.y >= abs.z) return { name: 'y', sign: Math.sign(vector.y) };
+        return { name: 'z', sign: Math.sign(vector.z) };
     }
 }
 
