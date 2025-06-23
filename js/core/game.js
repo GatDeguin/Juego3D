@@ -12,6 +12,7 @@ class Game {
         this.renderer.setSize(this.canvas.clientWidth, this.canvas.clientHeight);
 
         this.clock = new THREE.Clock();
+        this.paused = false;
         this.gravity = new GravityController();
         this.player = new Player();
         this.scene.add(this.player.mesh);
@@ -24,6 +25,10 @@ class Game {
         window.addEventListener('resize', () => this._onResize());
         this._onResize();
         requestAnimationFrame(this.animate);
+    }
+
+    togglePause() {
+        this.paused = !this.paused;
     }
 
     _setupScene() {
@@ -65,10 +70,12 @@ class Game {
         requestAnimationFrame(this.animate);
         const delta = this.clock.getDelta();
 
-        this.player.update(delta, this.keys, this.gravity, this.level.getCollidables());
-        this.level.update(delta, this.player);
-        this.camera.position.addScaledVector(this.player.velocity, delta);
-        this.camera.lookAt(this.player.mesh.position);
+        if (!this.paused) {
+            this.player.update(delta, this.keys, this.gravity, this.level.getCollidables());
+            this.level.update(delta, this.player);
+            this.camera.position.addScaledVector(this.player.velocity, delta);
+            this.camera.lookAt(this.player.mesh.position);
+        }
         this.renderer.render(this.scene, this.camera);
     }
 }
