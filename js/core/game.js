@@ -38,9 +38,18 @@ class Game {
         this.keys = {};
         window.addEventListener('keydown', (e) => {
             this.keys[e.code] = true;
-            if (e.code === 'KeyG') this.gravity.rotate('x');
-            if (e.code === 'KeyH') this.gravity.rotate('y');
-            if (e.code === 'KeyJ') this.gravity.rotate('z');
+            if (e.code === 'KeyG') {
+                this.gravity.rotate('x');
+                this.player.onGravityChange(this.gravity.vector);
+            }
+            if (e.code === 'KeyH') {
+                this.gravity.rotate('y');
+                this.player.onGravityChange(this.gravity.vector);
+            }
+            if (e.code === 'KeyJ') {
+                this.gravity.rotate('z');
+                this.player.onGravityChange(this.gravity.vector);
+            }
         });
         window.addEventListener('keyup', (e) => {
             this.keys[e.code] = false;
@@ -59,22 +68,7 @@ class Game {
         requestAnimationFrame(this.animate);
         const delta = this.clock.getDelta();
 
-        const speed = 5;
-        if (this.keys['ArrowLeft'] || this.keys['KeyA']) {
-            this.player.velocity.x -= speed * delta;
-        }
-        if (this.keys['ArrowRight'] || this.keys['KeyD']) {
-            this.player.velocity.x += speed * delta;
-        }
-        if (this.keys['ArrowUp'] || this.keys['KeyW']) {
-            this.player.velocity.z -= speed * delta;
-        }
-        if (this.keys['ArrowDown'] || this.keys['KeyS']) {
-            this.player.velocity.z += speed * delta;
-        }
-
-        this.gravity.applyTo(this.player.velocity, delta);
-        this.player.mesh.position.addScaledVector(this.player.velocity, delta);
+        this.player.update(delta, this.keys, this.gravity);
         this.camera.position.addScaledVector(this.player.velocity, delta);
         this.camera.lookAt(this.player.mesh.position);
         this.renderer.render(this.scene, this.camera);
