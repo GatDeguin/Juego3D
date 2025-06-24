@@ -21,7 +21,7 @@ Place your own audio clips in `assets/audio` named `jump.wav`, `gravity.wav`, `p
 
 ## Development Setup
 
-The game relies on Three.js for all 3D rendering. No build step is required; just serve the files with a small HTTP server. With Node.js installed you can run:
+The game relies on Three.js for all 3D rendering. **Version 0.146.0** (or a compatible release) is required because the project still uses the non-module loader. No build step is required; just serve the files with a small HTTP server. With Node.js installed you can run:
 
 ```bash
 npx serve
